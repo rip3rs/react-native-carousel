@@ -9,6 +9,10 @@ If you are looking for a more powered and more functional swiper / carousel, I r
 
 `npm i --save react-native-carousel-swiper`
 
+or
+
+`yarn add react-native-carousel-swiper`
+
 ## Usage
 
 ```javascript
