@@ -1,7 +1,12 @@
 # react-native-carousel
 
 **NOTE**
-This is a refactored carousel from react-native-swiper: https://github.com/leecade/react-native-swiper
+
+Currently this module does not support IOS, as I only really needed it for android. I will fix this though.
+
+**NOTE**
+
+This is a heavly refactored carousel from react-native-swiper: https://github.com/leecade/react-native-swiper
 I did this to have a more simpler way to view it's code. Removed some things like the ability to add different type of styling.
 If you are looking for a more powered and more functional swiper / carousel, I recommend you checking them out. It is pretty well documentated.
 
@@ -44,6 +49,12 @@ export default class App extends Component {
 |  arrows   |  bool  |  true   |        Show Arrows        |
 |  bullets  |  bool  |  true   | Show Bullets (pagination) |
 | loopTimer | number |    5    |    Time for auto loop     |
+
+## Todo
+
+- Add IOS compatibility
+- Add custom styling into props
+- If on loop fade out Arrows, once touched show back arrows
 
 ## Contribute
 
