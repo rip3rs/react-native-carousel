@@ -1,0 +1,9 @@
+{
+  "extends": ["plugin:prettier/recommended", "plugin:flowtype/recommended"],
+  "parser": "babel-eslint",
+  "plugins": ["react", "react-native", "flowtype", "flowtype-errors"],
+  "rules": {
+    "flowtype-errors/show-errors": 2,
+    "flowtype-errors/show-warnings": 1
+  }
+}

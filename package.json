@@ -1,0 +1,42 @@
+{
+  "name": "react-native-carousel-swiper",
+  "version": "1.0.0",
+  "description": "A refactored carousel from react-native-swiper < https://github.com/leecade/react-native-swiper >",
+  "main": "dist/index.js",
+  "repository": "git@github.com:rip3rs/react-native-carousel.git",
+  "author": "Joseph Briggs <jbriggsr3@gmail.com>",
+  "license": "MIT",
+  "private": false,
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "flow": "flow",
+    "prepack": "npm run prepack:babel && npm run prepack:flow",
+    "prepack:babel": "babel src -d dist",
+    "prepack:flow": "flow-copy-source src dist"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.1.5",
+    "@babel/core": "^7.0.0-0",
+    "@babel/runtime": "^7.1.2",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.9.0",
+    "eslint-config-prettier": "^3.3.0",
+    "eslint-config-react-native": "^4.0.0",
+    "eslint-plugin-flowtype": "^3.2.0",
+    "eslint-plugin-flowtype-errors": "^3.6.0",
+    "eslint-plugin-prettier": "^3.0.0",
+    "eslint-plugin-react": "^7.11.1",
+    "eslint-plugin-react-native": "^3.5.0",
+    "eslint-watch": "^4.0.2",
+    "flow-bin": "^0.78.0",
+    "metro-react-native-babel-preset": "0.48.1",
+    "prettier": "^1.15.2"
+  },
+  "dependencies": {
+    "flow-copy-source": "^2.0.2",
+    "react": "^16.6.3",
+    "react-native": "^0.57.5"
+  }
+}
