@@ -1,8 +1,8 @@
 {
   "name": "react-native-carousel-swiper",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A refactored carousel from react-native-swiper < https://github.com/leecade/react-native-swiper >",
-  "main": "dist/carousel.js",
+  "main": "src/carousel.js",
   "repository": "git@github.com:rip3rs/react-native-carousel.git",
   "author": "Joseph Briggs <jbriggsr3@gmail.com>",
   "license": "MIT",
@@ -12,6 +12,8 @@
   ],
   "scripts": {
     "flow": "flow",
+    "flow:start": "flow start",
+    "flow:stop": "flow stop",
     "prepack": "npm run prepack:babel && npm run prepack:flow",
     "prepack:babel": "babel src -d dist",
     "prepack:flow": "flow-copy-source src dist"
