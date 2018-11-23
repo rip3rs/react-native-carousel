@@ -50,14 +50,13 @@ const styles = {
     position: "absolute",
     top: 0,
     left: 0,
-    flex: 1,
     paddingHorizontal: 10,
     paddingVertical: 10,
     justifyContent: "space-between",
     alignItems: "center"
   },
   buttonContainer: {
-    height: "100%",
+    height: "25%",
     justifyContent: "center"
   },
   buttonText: {

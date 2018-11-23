@@ -15,14 +15,14 @@ import Arrows from "./options/arrows";
 
 type Props = {
   children: Array<Object>,
-  loop?: boolean,
-  arrows?: boolean,
-  bullets?: boolean,
-  loopTimer: number
+  loop: boolean,
+  arrows: boolean,
+  bullets: boolean,
+  loopTimer: number,
+  margin: number
 };
 
 type State = {
-  total: number,
   index: number,
   loopJump: boolean
 };
@@ -32,13 +32,15 @@ class Carousel extends Component<Props, State> {
     loop: true,
     arrows: true,
     bullets: true,
-    loopTimer: 5
+    loopTimer: 5,
+    margin: 0
   };
 
   scrollView: ViewPagerAndroid = null;
   state: State = this.initState();
-  loopInterval: IntervalID;
-  loopIntervalIsOn: boolean = false;
+  total: number = this.props.children ? this.props.children.length || 1 : 0;
+  playerTimeOut: TimeoutID;
+  playerTimeOutIsOn: boolean = false;
   dimensions: Object = {
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height
@@ -47,21 +49,17 @@ class Carousel extends Component<Props, State> {
   initState(): State {
     const { children } = this.props;
     return {
-      total: children ? children.length || 1 : 0,
       index: 1,
       loopJump: false
     };
   }
 
   componentDidMount() {
-    const { total } = this.state;
-    const { loop } = this.props;
-
-    if (total > 1 && loop) this.loop();
+    if (this.total > 1 && this.props.loop) this.loop();
   }
 
   componentWillUnmount() {
-    clearInterval(this.loopInterval);
+    clearTimeout(this.playerTimeOut);
   }
 
   onPageSelectedHandler = (e: Object): void => {
@@ -69,37 +67,44 @@ class Carousel extends Component<Props, State> {
   };
 
   onPageScrollStateHandler = (e: string): void => {
+    const { loop } = this.props;
+
     switch (true) {
       case e === "dragging":
-        console.log("on the draag");
-        this.loopIntervalIsOn = false;
-        clearInterval(this.loopInterval);
-        console.log(this.loopInterval);
+        this.playerTimeOutIsOn = false;
+        clearTimeout(this.playerTimeOut);
         break;
-      case e === "idle" && !this.loopIntervalIsOn:
+      case e === "idle" && !this.playerTimeOutIsOn && loop:
         this.loop();
         break;
     }
   };
 
   loop = (): void => {
-    const { loopTimer } = this.props;
-    this.loopIntervalIsOn = true;
+    this.playerTimeOutIsOn = true;
+    const { loopTimer, children } = this.props;
+    const { index } = this.state;
+    let nextChild = children[index === this.total ? 0 : index];
 
-    this.loopInterval = setInterval(
-      () => this.calcIndex(this.state.index + 1, true),
-      loopTimer * 1000
-    );
+    let time =
+      "attr" in nextChild
+        ? parseInt(nextChild.attr.runningtime) * 1000
+        : loopTimer * 1000;
+
+    clearTimeout(this.playerTimeOut);
+    this.playerTimeOut = setTimeout(() => {
+      this.calcIndex(index + 1);
+    }, time);
   };
 
   calcIndex = (i: number, animated: boolean = false): void => {
     let index: number = i;
     let loopJump: boolean = false;
 
-    if (index <= 0) {
-      index = this.state.total;
+    if (i <= 0) {
+      index = this.total;
       loopJump = true;
-    } else if (index > this.state.total) {
+    } else if (i > this.total) {
       index = 1;
       loopJump = true;
     }
@@ -108,6 +113,8 @@ class Carousel extends Component<Props, State> {
       { ...this.state, index: index, loopJump },
       (): void => this.loopJump(animated)
     );
+
+    if (this.playerTimeOutIsOn) this.loop();
   };
 
   loopJump = (animated: boolean): void => {
@@ -115,66 +122,89 @@ class Carousel extends Component<Props, State> {
 
     if (!animated && !loopJump) return;
 
+    console.log(animated && !loopJump ? "setPage" : "setPageWithoutAnimation");
     this.scrollView[
       animated && !loopJump ? "setPage" : "setPageWithoutAnimation"
     ](index);
   };
 
   scrollBy = (i: number): void => {
-    const { index, total } = this.state;
+    const { index } = this.state;
     const newIndex: number = i + index;
 
-    if (total < 2) return;
+    if (this.total < 2) return;
 
     this.calcIndex(newIndex, true);
   };
 
-  render(): React$Node {
+  pageType = (page: number, i: number): React$Element<typeof View> => {
     const { children } = this.props;
-    const { index, total } = this.state;
+    const { index } = this.state;
+
+    console.log(
+      !React.isValidElement(children[page]) &&
+        children[page].constructor === Object &&
+        "attr" in children[page]
+    );
+
+    if (
+      !React.isValidElement(children[page]) &&
+      children[page].constructor === Object &&
+      "attr" in children[page]
+    ) {
+      return (
+        <View key={i}>
+          {children[page].attr.isVideo === true && index !== page + 1 ? (
+            <View style={styles.videoNotLoaded} />
+          ) : (
+            children[page].component
+          )}
+        </View>
+      );
+    } else {
+      return <View key={i}>{children[page]}</View>;
+    }
+  };
+
+  render(): React$Node {
+    const { children, margin, bullets, arrows } = this.props;
+    const { index } = this.state;
 
     let indexes: Array<number> = [];
     let pages: Array<React$Element<typeof View>> = [] || {};
 
-    if (total > 1) {
-      indexes = children.reduce((p, n, i) => {
-        p.push(i);
-        return p;
-      }, []);
+    indexes = children.reduce((p, n, i) => {
+      p.push(i);
+      return p;
+    }, []);
 
-      indexes.unshift(total - 1);
-      indexes.push(0);
+    indexes.unshift(this.total - 1);
+    indexes.push(0);
 
-      pages = indexes.map((page, i) => (
-        <View key={i}>{children[page].component}</View>
-      ));
-    } else {
-      pages = [<View key={0}>{children}</View>];
-    }
+    pages = indexes.map((page, i) => this.pageType(page, i));
 
     return (
       <View style={[styles.container]}>
         <ViewPagerAndroid
           ref={ref => (this.scrollView = ref)}
-          {...this.props}
           initialPage={index}
           onPageSelected={this.onPageSelectedHandler}
           onPageScrollStateChanged={this.onPageScrollStateHandler}
           key={React.Children.count(indexes)}
-          pageMargin={20}
+          pageMargin={margin}
           style={[styles.wrapperAndroid]}
         >
           {pages}
         </ViewPagerAndroid>
 
-        {this.props.bullets && total > 1 ? (
+        {bullets && this.total > 1 ? (
           <Bullets
             index={index}
-            total={total}
+            total={this.total}
             calcIndexHandler={this.calcIndex}
           />
         ) : null}
-        {this.props.arrows ? (
+        {arrows ? (
           <Arrows
             dimensions={this.dimensions}
             scrollByHandler={this.scrollBy}
@@ -207,21 +237,10 @@ const styles = {
     alignItems: "center"
   },
 
-  buttonWrapper: {
-    backgroundColor: "transparent",
-    flexDirection: "row",
-    position: "absolute",
-    top: 0,
-    left: 0,
+  videoNotLoaded: {
     flex: 1,
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    justifyContent: "space-between",
-    alignItems: "center"
-  },
-
-  buttonText: {
-    fontSize: 150,
-    color: "#007aff"
+    height: "100%",
+    width: "100%",
+    backgroundColor: "#000000"
   }
 };
