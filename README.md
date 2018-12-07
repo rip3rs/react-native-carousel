@@ -50,7 +50,7 @@ To do this there MUST be a object that is passed (these are the MAIN attr that r
 | Attributes  |  type  |               Description                |
 | :---------: | :----: | :--------------------------------------: |
 |   isVideo   |  bool  |         If it is a Video (\*\*)          |
-| runningTime | number | Time running each component (in seconds) |
+| runningtime | number | Time running each component (in seconds) |
 
 \*\* Video you will have to have either [NPM: React Native Video](https://www.npmjs.com/package/react-native-video) or something else in your custom component.
 What this is doing is creating a empty black `<View>` so that ONLY when the video in being seen it loads. this is to make sure that we don't kill the tablet.

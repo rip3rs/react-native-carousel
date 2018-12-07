@@ -29,7 +29,7 @@ type State = {
 
 class Carousel extends Component<Props, State> {
   static defaultProps = {
-    loop: true,
+    loop: false,
     arrows: true,
     bullets: true,
     loopTimer: 5,
@@ -40,6 +40,7 @@ class Carousel extends Component<Props, State> {
   state: State = this.initState();
   total: number = this.props.children ? this.props.children.length || 1 : 0;
   playerTimeOut: TimeoutID;
+  currentRunningPageEndTimer: TimeoutID;
   playerTimeOutIsOn: boolean = false;
   dimensions: Object = {
     width: Dimensions.get("window").width,
@@ -67,7 +68,7 @@ class Carousel extends Component<Props, State> {
   };
 
   onPageScrollStateHandler = (e: string): void => {
-    const { loop } = this.props;
+    const { loop, children } = this.props;
 
     switch (true) {
       case e === "dragging":
@@ -75,7 +76,10 @@ class Carousel extends Component<Props, State> {
         clearTimeout(this.playerTimeOut);
         break;
       case e === "idle" && !this.playerTimeOutIsOn && loop:
-        this.loop();
+        clearTimeout(this.currentRunningPageEndTimer);
+        this.currentRunningPageEndTimer = setTimeout(() => {
+          this.loop();
+        }, parseInt(children[this.state.index - 1].attr.runningtime) * 1000);
         break;
     }
   };
@@ -91,8 +95,8 @@ class Carousel extends Component<Props, State> {
         ? parseInt(nextChild.attr.runningtime) * 1000
         : loopTimer * 1000;
 
-    clearTimeout(this.playerTimeOut);
     this.playerTimeOut = setTimeout(() => {
+      clearTimeout(this.playerTimeOut);
       this.calcIndex(index + 1);
     }, time);
   };
@@ -110,7 +114,7 @@ class Carousel extends Component<Props, State> {
     }
 
     this.setState(
-      { ...this.state, index: index, loopJump },
+      { ...this.state, index, loopJump },
       (): void => this.loopJump(animated)
     );
 
@@ -120,12 +124,7 @@ class Carousel extends Component<Props, State> {
   loopJump = (animated: boolean): void => {
     const { index, loopJump } = this.state;
 
-    if (!animated && !loopJump) return;
-
-    console.log(animated && !loopJump ? "setPage" : "setPageWithoutAnimation");
-    this.scrollView[
-      animated && !loopJump ? "setPage" : "setPageWithoutAnimation"
-    ](index);
+    this.scrollView[!loopJump ? "setPage" : "setPageWithoutAnimation"](index);
   };
 
   scrollBy = (i: number): void => {
@@ -137,32 +136,33 @@ class Carousel extends Component<Props, State> {
     this.calcIndex(newIndex, true);
   };
 
-  pageType = (page: number, i: number): React$Element<typeof View> => {
+  pageType = (page: Array<number>, i: number): React$Element<typeof View> => {
     const { children } = this.props;
     const { index } = this.state;
 
-    console.log(
-      !React.isValidElement(children[page]) &&
-        children[page].constructor === Object &&
-        "attr" in children[page]
-    );
-
     if (
-      !React.isValidElement(children[page]) &&
-      children[page].constructor === Object &&
-      "attr" in children[page]
+      !React.isValidElement(children[page[0]]) &&
+      children[page[0]].constructor === Object &&
+      "attr" in children[page[0]]
     ) {
+      console.log(
+        page,
+        index,
+        page[1] === index,
+        children[page[0]].attr.isVideo === true && page[1] !== index
+      );
+
       return (
         <View key={i}>
-          {children[page].attr.isVideo === true && index !== page + 1 ? (
+          {children[page[0]].attr.isVideo === true && page[1] !== index ? (
             <View style={styles.videoNotLoaded} />
           ) : (
-            children[page].component
+            children[page[0]].component
           )}
         </View>
       );
     } else {
-      return <View key={i}>{children[page]}</View>;
+      return <View key={i}>{children[page[0]]}</View>;
     }
   };
 
@@ -170,9 +170,10 @@ class Carousel extends Component<Props, State> {
     const { children, margin, bullets, arrows } = this.props;
     const { index } = this.state;
 
-    let indexes: Array<number> = [];
+    let indexes: Array<any> = [];
     let pages: Array<React$Element<typeof View>> = [] || {};
 
+    // [[4, 0], [0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [0, 6]]
     indexes = children.reduce((p, n, i) => {
       p.push(i);
       return p;
@@ -181,8 +182,10 @@ class Carousel extends Component<Props, State> {
     indexes.unshift(this.total - 1);
     indexes.push(0);
 
-    pages = indexes.map((page, i) => this.pageType(page, i));
+    indexes = indexes.map((index, i) => [index, i]);
 
+    console.log(indexes);
+    pages = indexes.map((page, i) => this.pageType(page, i));
     return (
       <View style={[styles.container]}>
         <ViewPagerAndroid
