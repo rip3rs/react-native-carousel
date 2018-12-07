@@ -145,13 +145,6 @@ class Carousel extends Component<Props, State> {
       children[page[0]].constructor === Object &&
       "attr" in children[page[0]]
     ) {
-      console.log(
-        page,
-        index,
-        page[1] === index,
-        children[page[0]].attr.isVideo === true && page[1] !== index
-      );
-
       return (
         <View key={i}>
           {children[page[0]].attr.isVideo === true && page[1] !== index ? (
@@ -184,7 +177,6 @@ class Carousel extends Component<Props, State> {
 
     indexes = indexes.map((index, i) => [index, i]);
 
-    console.log(indexes);
     pages = indexes.map((page, i) => this.pageType(page, i));
     return (
       <View style={[styles.container]}>
