@@ -1,6 +1,6 @@
 {
   "name": "react-native-carousel-swiper",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "A refactored carousel from react-native-swiper < https://github.com/leecade/react-native-swiper >",
   "main": "dist/carousel.js",
   "author": "Joseph Briggs <jbriggsr3@gmail.com>",
