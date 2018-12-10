@@ -3,10 +3,17 @@
   "version": "1.0.7",
   "description": "A refactored carousel from react-native-swiper < https://github.com/leecade/react-native-swiper >",
   "main": "dist/carousel.js",
-  "repository": "git@github.com:rip3rs/react-native-carousel.git",
   "author": "Joseph Briggs <jbriggsr3@gmail.com>",
   "license": "MIT",
   "private": false,
+  "homepage": "https://github.com/rip3rs/react-native-carousel",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rip3rs/react-native-carousel.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rip3rs/react-native-carousel/issues"
+  },
   "files": [
     "dist"
   ],
