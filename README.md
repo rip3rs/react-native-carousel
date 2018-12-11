@@ -2,10 +2,6 @@
 
 **NOTE**
 
-Loop is not working properly, so I removed the default loop to false.
-
-**NOTE**
-
 Currently this module does not support IOS, as I only really needed it for android. I will fix this though.
 
 **NOTE**

@@ -29,7 +29,7 @@ type State = {
 
 class Carousel extends Component<Props, State> {
   static defaultProps = {
-    loop: false,
+    loop: true,
     arrows: true,
     bullets: true,
     loopTimer: 5,
@@ -40,7 +40,6 @@ class Carousel extends Component<Props, State> {
   state: State = this.initState();
   total: number = this.props.children ? this.props.children.length || 1 : 0;
   playerTimeOut: TimeoutID;
-  currentRunningPageEndTimer: TimeoutID;
   playerTimeOutIsOn: boolean = false;
   dimensions: Object = {
     width: Dimensions.get("window").width,
@@ -68,6 +67,7 @@ class Carousel extends Component<Props, State> {
   };
 
   onPageScrollStateHandler = (e: string): void => {
+    let currentRunningPageEndTimer;
     const { loop, children } = this.props;
 
     switch (true) {
@@ -76,8 +76,11 @@ class Carousel extends Component<Props, State> {
         clearTimeout(this.playerTimeOut);
         break;
       case e === "idle" && !this.playerTimeOutIsOn && loop:
-        clearTimeout(this.currentRunningPageEndTimer);
-        this.currentRunningPageEndTimer = setTimeout(() => {
+        if (currentRunningPageEndTimer) {
+          clearTimeout(currentRunningPageEndTimer);
+        }
+
+        currentRunningPageEndTimer = setTimeout(() => {
           this.loop();
         }, parseInt(children[this.state.index - 1].attr.runningtime) * 1000);
         break;
@@ -88,8 +91,7 @@ class Carousel extends Component<Props, State> {
     this.playerTimeOutIsOn = true;
     const { loopTimer, children } = this.props;
     const { index } = this.state;
-    let nextChild = children[index === this.total ? 0 : index];
-
+    let nextChild = children[index > this.total ? 0 : index - 1];
     let time =
       "attr" in nextChild
         ? parseInt(nextChild.attr.runningtime) * 1000
