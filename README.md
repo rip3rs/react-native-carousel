@@ -1,14 +1,12 @@
 # react-native-carousel
 
+Yet another carousel... This allows for video and any type of component within the carousel.
+
+This is meant for really low performance ANDROID tablets.
+
 **NOTE**
 
 Currently this module does not support IOS, as I only really needed it for android. I will fix this though.
-
-**NOTE**
-
-This is a heavly refactored carousel from react-native-swiper: https://github.com/leecade/react-native-swiper
-I did this to have a more simpler way to view it's code. Removed some things like the ability to add different type of styling.
-If you are looking for a more powered and more functional swiper / carousel, I recommend you checking them out. It is pretty well documentated.
 
 ## Install
 
@@ -101,7 +99,8 @@ export default class App extends Component {
 
 |   Props   |  type  | Default |        Description        |
 | :-------: | :----: | :-----: | :-----------------------: |
-|   loop    |  bool  |  true   |         Auto loop         |
+|  loop     |  bool  |  true   |         Auto loop         |
+|  swipe    |  bool  |  true   |    Switch swipe on off    |
 |  arrows   |  bool  |  true   |        Show Arrows        |
 |  bullets  |  bool  |  true   | Show Bullets (pagination) |
 | loopTimer | number |    5    |    Time for auto loop     |

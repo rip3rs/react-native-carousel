@@ -9,6 +9,7 @@ import Arrows from './options/arrows';
 
 type Props = {
   children: Array<Object>,
+  swipe: boolean,
   loop: boolean,
   arrows: boolean,
   bullets: boolean,
@@ -23,6 +24,7 @@ type State = {
 
 class Carousel extends Component<Props, State> {
   static defaultProps = {
+    swipe: true,
     loop: true,
     arrows: true,
     bullets: true,
@@ -150,7 +152,7 @@ class Carousel extends Component<Props, State> {
   };
 
   render(): React$Node {
-    const { children, margin, bullets, arrows } = this.props;
+    const { children, margin, bullets, arrows, swipe } = this.props;
     const { index } = this.state;
 
     let indexes: Array<any> = [];
@@ -173,6 +175,7 @@ class Carousel extends Component<Props, State> {
         <ViewPagerAndroid
           ref={ref => (this.scrollView = ref)}
           initialPage={index}
+          scrollEnabled={swipe}
           onPageSelected={this.onPageSelectedHandler}
           onPageScrollStateChanged={this.onPageScrollStateHandler}
           key={React.Children.count(indexes)}
