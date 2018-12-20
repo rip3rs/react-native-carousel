@@ -2,16 +2,10 @@
  * @flow strict
  */
 
-import React, { Component } from "react";
-import {
-  View,
-  Text,
-  Dimensions,
-  ViewPagerAndroid,
-  TouchableOpacity
-} from "react-native";
-import Bullets from "./options/bullets";
-import Arrows from "./options/arrows";
+import React, { Component } from 'react';
+import { View, Text, Dimensions, ViewPagerAndroid, TouchableOpacity } from 'react-native';
+import Bullets from './options/bullets';
+import Arrows from './options/arrows';
 
 type Props = {
   children: Array<Object>,
@@ -32,7 +26,7 @@ class Carousel extends Component<Props, State> {
     loop: true,
     arrows: true,
     bullets: true,
-    loopTimer: 5,
+    loopTimer: 15,
     margin: 0
   };
 
@@ -42,8 +36,8 @@ class Carousel extends Component<Props, State> {
   playerTimeOut: TimeoutID;
   playerTimeOutIsOn: boolean = false;
   dimensions: Object = {
-    width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height
   };
 
   initState(): State {
@@ -71,11 +65,11 @@ class Carousel extends Component<Props, State> {
     const { loop, children } = this.props;
 
     switch (true) {
-      case e === "dragging":
+      case e === 'dragging':
         this.playerTimeOutIsOn = false;
         clearTimeout(this.playerTimeOut);
         break;
-      case e === "idle" && !this.playerTimeOutIsOn && loop:
+      case e === 'idle' && !this.playerTimeOutIsOn && loop:
         if (currentRunningPageEndTimer) {
           clearTimeout(currentRunningPageEndTimer);
         }
@@ -92,10 +86,7 @@ class Carousel extends Component<Props, State> {
     const { loopTimer, children } = this.props;
     const { index } = this.state;
     let nextChild = children[index > this.total ? 0 : index - 1];
-    let time =
-      "attr" in nextChild
-        ? parseInt(nextChild.attr.runningtime) * 1000
-        : loopTimer * 1000;
+    let time = 'attr' in nextChild ? parseInt(nextChild.attr.runningtime) * 1000 : loopTimer * 1000;
 
     this.playerTimeOut = setTimeout(() => {
       clearTimeout(this.playerTimeOut);
@@ -115,10 +106,7 @@ class Carousel extends Component<Props, State> {
       loopJump = true;
     }
 
-    this.setState(
-      { ...this.state, index, loopJump },
-      (): void => this.loopJump(animated)
-    );
+    this.setState({ ...this.state, index, loopJump }, (): void => this.loopJump(animated));
 
     if (this.playerTimeOutIsOn) this.loop();
   };
@@ -126,7 +114,7 @@ class Carousel extends Component<Props, State> {
   loopJump = (animated: boolean): void => {
     const { index, loopJump } = this.state;
 
-    this.scrollView[!loopJump ? "setPage" : "setPageWithoutAnimation"](index);
+    this.scrollView[!loopJump ? 'setPage' : 'setPageWithoutAnimation'](index);
   };
 
   scrollBy = (i: number): void => {
@@ -145,7 +133,7 @@ class Carousel extends Component<Props, State> {
     if (
       !React.isValidElement(children[page[0]]) &&
       children[page[0]].constructor === Object &&
-      "attr" in children[page[0]]
+      'attr' in children[page[0]]
     ) {
       return (
         <View key={i}>
@@ -195,18 +183,9 @@ class Carousel extends Component<Props, State> {
         </ViewPagerAndroid>
 
         {bullets && this.total > 1 ? (
-          <Bullets
-            index={index}
-            total={this.total}
-            calcIndexHandler={this.calcIndex}
-          />
+          <Bullets index={index} total={this.total} calcIndexHandler={this.calcIndex} />
         ) : null}
-        {arrows ? (
-          <Arrows
-            dimensions={this.dimensions}
-            scrollByHandler={this.scrollBy}
-          />
-        ) : null}
+        {arrows ? <Arrows dimensions={this.dimensions} scrollByHandler={this.scrollBy} /> : null}
       </View>
     );
   }
@@ -216,28 +195,28 @@ export default Carousel;
 
 const styles = {
   container: {
-    backgroundColor: "transparent",
-    position: "relative",
+    backgroundColor: 'transparent',
+    position: 'relative',
     flex: 1,
-    height: "100%",
-    width: "100%",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center"
+    height: '100%',
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
 
   wrapperAndroid: {
-    height: "100%",
-    width: "100%",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center"
+    height: '100%',
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
 
   videoNotLoaded: {
     flex: 1,
-    height: "100%",
-    width: "100%",
-    backgroundColor: "#000000"
+    height: '100%',
+    width: '100%',
+    backgroundColor: '#000000'
   }
 };
