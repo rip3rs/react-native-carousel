@@ -3,7 +3,8 @@
  */
 
 import React, { Component } from 'react';
-import { View, Text, Dimensions, ViewPagerAndroid, TouchableOpacity } from 'react-native';
+import { View, Text, Dimensions, TouchableOpacity } from 'react-native';
+import { ViewPagerAndroid } from 'react-native-viewpager';
 import Bullets from './options/bullets';
 import Arrows from './options/arrows';
 
